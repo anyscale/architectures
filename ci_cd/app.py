@@ -7,8 +7,8 @@ from fastapi import FastAPI, Header, HTTPException
 from loguru import logger
 from pydantic import BaseModel
 
-from demo_lifecycle.log_config import setup_logging
-from demo_lifecycle.ray_impl.remote_compute import RayEntryPoint
+from . log_config import setup_logging
+from . driver import RayEntryPoint
 
 
 class ServiceStatus(BaseModel):
@@ -19,7 +19,7 @@ class ServiceStatus(BaseModel):
 
 
 app = FastAPI(
-    title="KGSA Predictions Service",
+    title="Anyscale Demo Architecture",
     description="Provides model training and prediction services",
     version=os.environ.get("IMAGE_TAG", "development"),
 )
@@ -30,13 +30,13 @@ global entry_point
 @app.on_event("startup")
 def on_startup():
     try:
-        ANYSCALE_URL = f"anyscale://demo-lifecycle-{os.environ['ANYSCALE_ENVIRONMENT']}"
+        ANYSCALE_URL = f"anyscale://demo-architecture-{os.environ['ANYSCALE_ENVIRONMENT']}"
     except KeyError:
-        ANYSCALE_URL = f"anyscale://demo-lifecycle"
-    ANYSCALE_CLI_TOKEN = os.environ["ANYSCALE_CLI_TOKEN"]
+        ANYSCALE_URL = f"anyscale://demo-architecture"
+    #ANYSCALE_CLI_TOKEN = os.environ["ANYSCALE_CLI_TOKEN"]
     print(f"Starting or connecting to Anyscale Cluster {ANYSCALE_URL}")
     global entry_point
-    entry_point = RayEntryPoint(ANYSCALE_URL, ANYSCALE_CLI_TOKEN)
+    entry_point = RayEntryPoint(ANYSCALE_URL)
 
 @app.on_event("shutdown")
 async def on_shutdown():

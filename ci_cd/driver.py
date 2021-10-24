@@ -2,40 +2,33 @@ import ray
 import time
 import random
 
-from .models import MyModel
-
-from ray.exceptions import GetTimeoutError
-
-
-@ray.remote
-def sub_job():
-    time.sleep(5)
-    return MyModel(random.choice("alongradomstring".split()), random.uniform(-1,1))
-
-
-@ray.remote
-class JobRunner:
-    def do_something(self):
-        random_numbers = []
-        for i in range(10):
-            random_numbers.append(sub_job.remote())
-        return random_numbers
+import ci_cd.ray_impl.remote_compute as rc
 
 
 class RayEntryPoint:
     """A driver class that encapsulates interaction with the ray cluster.  On initialization, the cluster is created or connected.  A remote actor is also instantiated, which contains the remote methods that will be called via this entry point class
     """
-    def __init__(self, url, token):
-        self.url = url
-        ray.init(url, 
-                project_dir=".", 
-                #runtime_env={"pip":"./requirements.txt"}
-                # this is one place to configure Anyscale environment
-                # if they do not vary by execution environment
-                #cluster_env=
-                #cluster_compute=
-                )
-        self.actor = JobRunner.remote()
+    def __init__(self, url):
+        self.initialized = False
+        self.initialize(url)
+
+    def __init__(self):
+        self.initialized = False
+        pass
+
+    def initialize(self, url):
+        if (not(self.initialized)):
+            self.url = url
+            ray.init(url, 
+                    project_dir="ci_cd/ray_impl", 
+                    #runtime_env={"pip":"./requirements.txt"}
+                    # this is one place to configure Anyscale environment
+                    # if they do not vary by execution environment
+                    #cluster_env=
+                    #cluster_compute=
+                    )
+            self.actor = rc.JobRunner.remote()
+        self.initialized = True
 
     def execute(self):
         """Kicks off the remote job.
@@ -65,4 +58,7 @@ class RayEntryPoint:
     def cleanup(self):
         ray.kill(self.actor)
 
-
+if (__name__ == "__main__"):
+    url = "anyscale://ci_cd_architecture"
+    entry_point = RayEntryPoint()
+    entry_point.initialize(url)
