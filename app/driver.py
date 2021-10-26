@@ -2,7 +2,7 @@ import ray
 import time
 import random
 
-import ci_cd.ray_impl.remote_compute as rc
+import ray_impl.remote_compute as rc
 
 
 class RayEntryPoint:
@@ -20,7 +20,7 @@ class RayEntryPoint:
         if (not(self.initialized)):
             self.url = url
             ray.init(url, 
-                    project_dir="ci_cd/ray_impl", 
+                    project_dir="ray_impl", 
                     #runtime_env={"pip":"./requirements.txt"}
                     # this is one place to configure Anyscale environment
                     # if they do not vary by execution environment
@@ -62,3 +62,7 @@ if (__name__ == "__main__"):
     url = "anyscale://ci_cd_architecture"
     entry_point = RayEntryPoint()
     entry_point.initialize(url)
+    #entry_point.execute()
+    #print(entry_response.respond())
+    #time.sleep(5)
+    #print(entry_response.respond())

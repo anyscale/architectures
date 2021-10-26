@@ -2,7 +2,7 @@ import ray
 import time
 import random
 
-from .models import MyModel
+from models import MyModel
 
 from ray.exceptions import GetTimeoutError
 
@@ -22,6 +22,7 @@ class JobRunner:
         return random_numbers
 
 if (__name__ == "__main__"):
+    #ray.init("anyscale://ci_cd_architecture")
     x = JobRunner.remote()
     r = x.do_something.remote()
     results_list = ray.get(r)
