@@ -12,10 +12,6 @@ class RayEntryPoint:
         self.initialized = False
         self.initialize(url)
 
-    def __init__(self):
-        self.initialized = False
-        pass
-
     def initialize(self, url):
         if (not(self.initialized)):
             self.url = url

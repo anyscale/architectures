@@ -39,6 +39,6 @@ jobs:
           pip install pytest
           pip install ray[serve]
           pip install anyscale
-          pip install -r demo_lifecycle/ray_impl/requirements.txt
+          pip install -r ray_impl/requirements.txt
           python -m pytest tests/remote_tests.py
           python -m pytest tests/test_app.py

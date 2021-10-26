@@ -1,10 +1,15 @@
 import ray
 import time
 import random
+import json
 
-from models import MyModel
+class MyModel:
+    def __init__(self, name, number):
+        self.name = name
+        self.number = number
 
-from ray.exceptions import GetTimeoutError
+    def as_json(self):
+        return json.dumps({"name":self.name,"number":self.number})
 
 @ray.remote
 def sub_job():
@@ -22,7 +27,7 @@ class JobRunner:
         return random_numbers
 
 if (__name__ == "__main__"):
-    #ray.init("anyscale://ci_cd_architecture")
+    ray.init("anyscale://ci_cd_architecture", project_dir="ray_impl")
     x = JobRunner.remote()
     r = x.do_something.remote()
     results_list = ray.get(r)
