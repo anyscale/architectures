@@ -7,8 +7,8 @@ from uuid import UUID
 import pytest
 from fastapi.testclient import TestClient
 
-from demo_lifecycle.app import app
-from demo_lifecycle.app import on_startup
+from app import app
+from app import on_startup
 
 client = TestClient(app)
 on_startup()

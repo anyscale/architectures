@@ -1,5 +1,5 @@
 import os
-from ray_impl.remote_compute import sub_job, JobRunner
+from app.ray_impl.remote_compute import sub_job, JobRunner
 from app.driver import RayEntryPoint
 import ray
 import json

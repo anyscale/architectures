@@ -2,7 +2,7 @@ import ray
 import time
 import random
 
-from .remote_compute import JobRunner
+from .ray_impl.remote_compute import JobRunner
 
 from ray.exceptions import GetTimeoutError
 
