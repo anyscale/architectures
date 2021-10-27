@@ -27,7 +27,7 @@ class JobRunner:
         return random_numbers
 
 if (__name__ == "__main__"):
-    ray.init("anyscale://ci_cd_architecture", project_dir="ray_impl")
+    ray.init("anyscale://ci_cd_architecture", project_dir=".", runtime_env={"excludes":["tests"]})
     x = JobRunner.remote()
     r = x.do_something.remote()
     results_list = ray.get(r)
