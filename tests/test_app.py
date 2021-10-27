@@ -8,9 +8,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import app
-from app import on_startup
+from app.app import on_startup
 
-client = TestClient(app)
+client = TestClient(app.app)
 on_startup()
 
 
