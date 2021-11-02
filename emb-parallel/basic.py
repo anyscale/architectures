@@ -20,6 +20,11 @@ for i in loc_list:
 
 # ray connection
 ray.init()
+@ray.remote
+def fit_prophet(i):
+    m = Prophet()
+    m.fit(df[df["PULocationID"]==i])
+    result[i]=m 
 
 ## Fire Hose Approach -- fire as fast as you can and wait for the result
 result = []
