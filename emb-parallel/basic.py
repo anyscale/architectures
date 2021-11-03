@@ -39,9 +39,9 @@ max_tasks = 10 # specifying the max number of results
 for i in loc_list:
 	if len(result) > max_tasks:
 		# calculating how many results should be available
-        num_ready = len(result)-max_tasks
-        # wait for num_returns to be equal to num_ready, ensuring the amount of task in flight is checked
-        ray.wait(result, num_returns=num_ready)
+	        num_ready = len(result)-max_tasks
+        	# wait for num_returns to be equal to num_ready, ensuring the amount of task in flight is checked
+	        ray.wait(result, num_returns=num_ready)
     result.append(fit_prophet.remote(i))
 ray.get(result)
 
