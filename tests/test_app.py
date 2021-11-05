@@ -20,11 +20,6 @@ def status():
     assert response.json() == {"status": "OK"}
 
 
-def test_healthcheck_gtg():
-    response = client.get("/service/healthcheck/gtg")
-    assert response.status_code == 200
-    assert response.json() == {"status": "OK"}
-
 def test_ray_submit():
     response = client.post("/service/ray_submit")
     assert response.status_code == 200

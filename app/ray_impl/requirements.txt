@@ -1,1 +1,3 @@
+ray[serve]
+pytest
 loguru
