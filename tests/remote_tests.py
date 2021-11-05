@@ -25,13 +25,4 @@ def test_job_runner():
     assert len(random_numbers) == 10
     ray.get(random_numbers) # cleanup
 
-#def test_second_cluster():
-#    #ANYSCALE_URL="anyscale://second-remote-tester?cluster_compute=small-testing&cloud=anyscale_default_cloud"
-#    ANYSCALE_URL="anyscale://second-remote-tester"
-#    ANYSCALE_CLI_TOKEN=os.environ["ANYSCALE_CLI_TOKEN"]
-#    second_entry = RayEntryPoint(ANYSCALE_URL, ANYSCALE_CLI_TOKEN)
-#    j = JobRunner.remote()
-#    random_numbers = ray.get(j.do_something.remote())
-#    assert len(random_numbers) == 10
-#    ray.get(random_numbers) # cleanup
 

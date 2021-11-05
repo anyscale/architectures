@@ -21,7 +21,7 @@ for i in loc_list:
 
 
 ## ray connection
-ray.init("anyscale://ci_cd_architecture", log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]})
+ray.init("anyscale://ci_cd", log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]})
 @ray.remote
 def fit_prophet(i):
     m = Prophet()
