@@ -30,9 +30,9 @@ global entry_point
 def on_startup():
     # If there is no ANYSCALE_ENVIRONMENT variable, set it to "dev"
     if 'ANYSCALE_ENVRIONMENT' in os.environ:
-        ANYSCALE_URL = f"anyscale://demo-architecture-{os.environ['ANYSCALE_ENVIRONMENT']}"
+        ANYSCALE_URL = f"anyscale://app-{os.environ['ANYSCALE_ENVIRONMENT']}"
     else:
-        ANYSCALE_URL = f"anyscale://demo-architecture-dev"
+        ANYSCALE_URL = f"anyscale://app-dev"
     print(f"Starting or connecting to Anyscale Cluster {ANYSCALE_URL}")
     global entry_point
     entry_point = RayEntryPoint(ANYSCALE_URL)

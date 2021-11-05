@@ -4,7 +4,7 @@ name: CI_CD_Architecture
 
 env:
   ANYSCALE_CLI_TOKEN: ${{ secrets.AUTOMATION_CLI_TOKEN }}
-  ANYSCALE_ENVIRONMENT: "CD_CD_Architecture"
+  ANYSCALE_ENVIRONMENT: "CI"
 
 # Controls when the workflow will run
 on:
