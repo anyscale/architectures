@@ -9,7 +9,7 @@ See (Anyscale Docs)[https://docs.anyscale.com/architectures/ci_cd] for documenta
 To use it yourself, you'll need an Anyscale account.
 
 * Clone the repo (or better yet, fork it)
-* install the requirements `pip install -r requirements.txt`
+* install the requirements `pip install -r app/ray_impl/requirements.txt`
 * Use pip to install the local package `pip install -e .`
 * Initialize this directory as a project in your own account: `anyscale init`
 
