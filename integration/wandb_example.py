@@ -1,4 +1,5 @@
 import ray
+import os
 # This script demonstrates using Weights and Biases from Anyscale
 import time
 
@@ -19,7 +20,7 @@ def log_to_wandb():
 
 ray.init("anyscale://integrations",
         project_dir=".", 
-        runtime_env={"excludes":["tests", "yello*"]})
+        runtime_env={"pip":["wandb"],
+            "env_vars":{"WANDB_API_KEY":f"{os.environ['WANDB_API_KEY']}"},
+            "excludes":["tests", "yello*"]})
 ray.get(log_to_wandb.remote())
-#wandb.watch(model)
-
