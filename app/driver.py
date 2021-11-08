@@ -2,10 +2,9 @@ import ray
 import time
 import random
 
-from .ray_impl.remote_compute import JobRunner
+from app.ray_impl.remote_compute import JobRunner
 
 from ray.exceptions import GetTimeoutError
-
 
 class RayEntryPoint:
     """A driver class that encapsulates interaction with the ray cluster.  On initialization, the cluster is created or connected.  A remote actor is also instantiated, which contains the remote methods that will be called via this entry point class
@@ -19,7 +18,7 @@ class RayEntryPoint:
             self.url = url
             ray.init(url, 
                     project_dir=".", 
-                    runtime_env={"excludes":["tests"]}
+                    runtime_env={"excludes":["tests", "yello*"]}
                     # this is one place to configure Anyscale environment
                     # if they do not vary by execution environment
                     #cluster_env=
