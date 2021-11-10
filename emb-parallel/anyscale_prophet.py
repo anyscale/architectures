@@ -4,7 +4,7 @@ import pandas as pd
 from prophet import Prophet
 
 ## data pre-processing
-df = pd.read_csv('./yellow_tripdata_2021-01.csv')
+df = pd.read_csv('emb-parallel/yellow_tripdata_2021-01.csv')
 df["tpep_pickup_datetime"] = pd.to_datetime(df["tpep_pickup_datetime"] ).dt.date.astype("datetime64")
 df= df[["tpep_pickup_datetime", "VendorID", "PULocationID"]]
 df = df.rename(columns={"tpep_pickup_datetime":"ds", "VendorID":"y"})
@@ -13,7 +13,7 @@ loc_list = df["PULocationID"].unique()
 
 
 ## ray connection
-ray.init("anyscale://ci_cd", log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]})
+ray.init("anyscale://parallel", log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]})
 @ray.remote
 def fit_prophet(i):
     m = Prophet()
