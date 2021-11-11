@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 with mlflow.start_run():
     alpha = "ALPHA"
     l1_ratio = "L1"
-    rmse = "RMSE"
-    r2 = "R2"
-    mae = "MAE"
+    rmse = 0.211
+    r2 = 0.122
+    mae = 30
     mlflow.log_param("alpha", alpha)
     mlflow.log_param("l1_ratio", l1_ratio)
     mlflow.log_metric("rmse", rmse)
