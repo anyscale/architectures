@@ -7,7 +7,6 @@ from fastapi import FastAPI, Header, HTTPException
 from loguru import logger
 from pydantic import BaseModel
 
-from . log_config import setup_logging
 from . driver import RayEntryPoint
 
 
@@ -29,11 +28,11 @@ global entry_point
 
 @app.on_event("startup")
 def on_startup():
-    try:
-        ANYSCALE_URL = f"anyscale://demo-architecture-{os.environ['ANYSCALE_ENVIRONMENT']}"
-    except KeyError:
-        ANYSCALE_URL = f"anyscale://demo-architecture"
-    #ANYSCALE_CLI_TOKEN = os.environ["ANYSCALE_CLI_TOKEN"]
+    # If there is no ANYSCALE_ENVIRONMENT variable, set it to "dev"
+    if 'ANYSCALE_ENVRIONMENT' in os.environ:
+        ANYSCALE_URL = f"anyscale://app-{os.environ['ANYSCALE_ENVIRONMENT']}"
+    else:
+        ANYSCALE_URL = f"anyscale://app-dev"
     print(f"Starting or connecting to Anyscale Cluster {ANYSCALE_URL}")
     global entry_point
     entry_point = RayEntryPoint(ANYSCALE_URL)
@@ -45,7 +44,6 @@ async def on_shutdown():
 # first iteration - synchronous ray task
 @app.post(
     "/service/ray_submit",
-    #response_model=StatusResponse,
     response_model_exclude_unset=True,
     summary="Ray Job",
     tags=["Ray"],
@@ -70,23 +68,11 @@ async def get_job_result():
     tags=["Service"],
 )
 async def status():
-    # TODO :: Add health checks like db connectivity
     return {"status": "OK"}
 
-
-@app.get(
-    "/service/healthcheck/gtg",
-    response_model=ServiceStatus,
-    response_model_exclude_unset=True,
-    tags=["Service"],
-)
-async def healthcheck_gtg():
-    return {"status": "OK"}
 
 
 ##-------------------------main------------------
-
-setup_logging()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

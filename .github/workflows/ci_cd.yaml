@@ -4,7 +4,7 @@ name: CI_CD_Architecture
 
 env:
   ANYSCALE_CLI_TOKEN: ${{ secrets.AUTOMATION_CLI_TOKEN }}
-  ANYSCALE_ENVIRONMENT: "CD_CD_Architecture"
+  ANYSCALE_ENVIRONMENT: "CI"
 
 # Controls when the workflow will run
 on:
@@ -37,7 +37,7 @@ jobs:
         run: |
           echo Demonstrating a simple CI Hook
           pip install pytest
-          pip install ray[serve]==1.7.0
+          pip install ray[serve]==1.8.0
           pip install anyscale
           pip install -r app/ray_impl/requirements.txt
           python -m pytest tests/remote_tests.py

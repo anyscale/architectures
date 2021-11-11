@@ -1,1 +1,5 @@
+ray[serve]
+pytest
 loguru
+wandb
+mlflow
