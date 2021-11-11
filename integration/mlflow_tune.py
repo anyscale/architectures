@@ -1,7 +1,7 @@
+import time
 import os
 import ray
 from ray import tune
-from ray.tune.integration.mlflow import MLflowLoggerCallback
 from ray.tune.integration.mlflow import mlflow_mixin
 import json
 
@@ -16,8 +16,8 @@ ray.init(
         project_dir=".", 
         runtime_env={"pip":["mlflow","ray[tune]"],
             "env_vars":{"MLFLOW_TRACKING_URI":"databricks",
-                        "DATABRICKS_HOST":"https://dbc-073b287d-29d2.cloud.databricks.com",
-                        "DATABRICKS_TOKEN":"dapi077fda433f7717096386f660d74db3aa"},
+                        "DATABRICKS_HOST":os.environ["DATABRICKS_HOST"],
+                        "DATABRICKS_TOKEN":os.environ["DATABRICKS_TOKEN"],
             "excludes":["tests", "yello*"]})
 
 tune.run(
@@ -28,6 +28,9 @@ tune.run(
         "b": tune.choice([4, 5, 6]),
         "mlflow":{
             "tracking_uri":"databricks",
-            "experiment_name":"/Users/cgreer@anyscale.com/first-experiment",
+            "experiment_name":os.environ["MLFLOW_EXPERIMENT_NAME"],
+            "save_artifact":True
         }
     })
+
+time.sleep(5)
