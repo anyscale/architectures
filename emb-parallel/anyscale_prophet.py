@@ -4,8 +4,6 @@ import pandas as pd
 from prophet import Prophet
 
 
-## ray connection
-ray.init("anyscale://parallel", log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]})
 
 @ray.remote
 class DataHolder:
@@ -30,10 +28,13 @@ def fit_prophet(i):
     m.fit(df[df["PULocationID"]==i])
     return m
 
+## ray connection
+#ray.init("anyscale://parallel", log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]}, namespace="prophet")
+ray.init(log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]}, namespace="prophet")
 ## back pressure to limit the # of tasks in flight
 result = []
 max_tasks = 10 # specifying the max number of results
-holder = DataHolder.options(name="dataHolder").remote()
+holder = DataHolder.options(name="dataHolder", lifetime="detached").remote()
 loc_list = ray.get(holder.fetch_data.remote())
 for i in loc_list:
     if len(result) > max_tasks:
