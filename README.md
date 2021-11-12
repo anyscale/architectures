@@ -48,3 +48,5 @@ This directory contains some sample code for integrating Ray on Anyscale with
 * DataDog
 * MLFlow
 
+Note that these scripts require various environment variables to be set in order to run.  In order to leverage any one of these patterns you have to create accounts on third-party services and configure appropriately.
+

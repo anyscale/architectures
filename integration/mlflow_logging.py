@@ -7,10 +7,9 @@ import logging
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
-
 @ray.remote
 def logging_task():
-    with mlflow.start_run():
+    with mlflow.start_run(run_name="Logging Run"):
         alpha = "ALPHA"
         l1_ratio = "L1"
         rmse = 0.211
@@ -25,10 +24,9 @@ def logging_task():
 
 ray.init(
         "anyscale://integrations",
-        #project_dir=".", 
         runtime_env={"pip":["mlflow","ray[tune]"],
             "env_vars":{"MLFLOW_TRACKING_URI":"databricks",
-                        "DATABRICKS_HOST":"https://dbc-073b287d-29d2.cloud.databricks.com",
+                        "DATABRICKS_HOST":os.environ["DATABRICKS_HOST"],
                         "DATABRICKS_TOKEN":os.environ["DATABRICKS_TOKEN"],
                         "MLFLOW_EXPERIMENT_NAME":os.environ["MLFLOW_EXPERIMENT_NAME"]},
             "excludes":["tests", "yello*"]})
