@@ -1,7 +1,9 @@
 ## import things
+import os
 import ray
 import pandas as pd
 from prophet import Prophet
+import mlflow
 
 
 
@@ -30,10 +32,17 @@ def fit_prophet(i):
     selection = df[df["PULocationID"]==i]
     if (len(selection) > 1):
         m.fit(selection)
+    mlflow.log_model("my_model",m)
     return m
 
 ## ray connection
-ray.init("anyscale://parallel", log_to_driver=False, runtime_env={"pip":["prophet"],"excludes":["yellow*"]}, namespace="prophet")
+ray.init("anyscale://parallel", log_to_driver=False, 
+        runtime_env= {"pip":["prophet", "mlflow"],"excludes":["yellow*"],
+                "env_vars":{"MLFLOW_TRACKING_URI":"databricks",
+                        "DATABRICKS_HOST":os.environ["DATABRICKS_HOST"],
+                        "DATABRICKS_TOKEN":os.environ["DATABRICKS_TOKEN"],
+                        "MLFLOW_EXPERIMENT_NAME":os.environ["MLFLOW_EXPERIMENT_NAME"]}},
+                        namespace="prophet")
 #ray.init(log_to_driver=False, namespace="prophet")
 ## back pressure to limit the # of tasks in flight
 result = []
