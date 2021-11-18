@@ -45,5 +45,5 @@ jobs:
           pip install ray[serve]==1.8.0
           pip install anyscale
           pip install -r app/ray_impl/requirements.txt
-          python emb-parallel/anysacle_prophet.py
+          python emb-parallel/anyscale_prophet.py
 
