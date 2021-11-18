@@ -32,7 +32,7 @@ def fit_prophet(i):
     selection = df[df["PULocationID"]==i]
     if (len(selection) > 1):
         m.fit(selection)
-    mlflow.log_model("my_model",m)
+    mlflow.autolog(models=True, exclusive=False)
     return m
 
 ## ray connection
