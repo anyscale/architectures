@@ -15,7 +15,7 @@ def log_to_wandb():
     }
     for i in range(100):
         wandb.log({"loss": i})
-        time.sleep(1)
+        time.sleep(0.5)
 
 
 ray.init("anyscale://integrations",

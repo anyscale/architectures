@@ -2,7 +2,6 @@
 import os
 import ray
 import pandas as pd
-from prophet import Prophet
 import mlflow
 
 
@@ -25,6 +24,7 @@ class DataHolder:
 
 @ray.remote
 def fit_prophet(i):
+    from prophet import Prophet
     m = Prophet()
     holder = ray.get_actor("dataHolder", namespace="prophet")
     data_ref = ray.get(holder.data.remote())
