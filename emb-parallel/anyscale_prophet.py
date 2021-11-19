@@ -35,11 +35,11 @@ def fit_prophet(i):
     data_ref = ray.get(holder.data.remote())
     df = ray.get(data_ref)
     selection = df[df["PULocationID"]==i]
-    selection.to_csv(f"s3://taxi-prophet-data/test-log/model-{i}.csv")
     if (len(selection) > 1):
         m.fit(selection)
-        futures = m.make_future_dataframe(periods=5)
-        m.to_csv(f"s3://taxi-prophet-data/output/model-{i}.csv")
+        futures = m.make_future_dataframe(periods=30)
+        forecast = m.predict(futures)
+        forecast.to_csv(f"s3://taxi-prophet-data/output/forecast-{i}.csv")
     else:
         print("Not enough data for predictions")
     return f"done-with-{i}"
@@ -49,7 +49,7 @@ def fit_prophet(i):
 @ray.remote
 def handle_runs():
     result = []
-    max_tasks = 2 # specifying the max number of results
+    max_tasks = 6 # This number should keep everything on one node
     holder = DataHolder.options(name="dataHolder", namespace="prophet").remote()
     loc_list = ray.get(holder.fetch_data.remote())
     for i in loc_list:
@@ -69,7 +69,7 @@ def handle_runs():
 
     
 ray.init("anyscale://parallel",
-#ray.init(
+#ray.init(address="auto",
         runtime_env= {"pip":["prophet", "mlflow", "boto3","fsspec","s3fs"],"excludes":["yellow*"],
                 "env_vars":{"MLFLOW_TRACKING_URI":"databricks",
                         "DATABRICKS_HOST":os.environ["DATABRICKS_HOST"],
