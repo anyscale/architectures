@@ -39,7 +39,7 @@ def fit_prophet(i):
         m.fit(selection)
         futures = m.make_future_dataframe(periods=30)
         forecast = m.predict(futures)
-        forecast.to_csv(f"s3://taxi-prophet-data/output/forecast-{i}.csv")
+        forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].to_csv(f"s3://taxi-prophet-data/output/forecast-{i}.csv")
     else:
         print("Not enough data for predictions")
     return f"done-with-{i}"
@@ -63,9 +63,6 @@ def handle_runs():
     for model in result:
         m = ray.get(model)
         print(m)
-
-
-
 
     
 ray.init("anyscale://parallel",

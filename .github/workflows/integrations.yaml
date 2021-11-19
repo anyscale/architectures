@@ -45,8 +45,8 @@ jobs:
           pip install ray[serve]==1.8.0
           pip install anyscale
           pip install -r app/ray_impl/requirements.txt
-          #python integration/wandb_example.py
-          #python integration/wandb_tune.py
+          python integration/wandb_example.py
+          python integration/wandb_tune.py
           python integration/mlflow_logging.py
           python integration/mlflow_tune.py
           python integration/data_dog.py
