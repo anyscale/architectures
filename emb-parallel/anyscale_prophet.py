@@ -4,12 +4,15 @@ import ray
 import pandas as pd
 import mlflow
 
+# Note -- this solution works only in the AWS BYOC solution
+# For fully-managed, access to S3 must be explicitly configured.
 
 
 @ray.remote
 class DataHolder:
 
     def fetch_data(self):
+        mlflow.autolog(log_models=True, exclusive=False)
         print("Fetching taxi data from s3")
         df = pd.read_csv("https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv")
         df["tpep_pickup_datetime"] = pd.to_datetime(df["tpep_pickup_datetime"] ).dt.date.astype("datetime64")
@@ -18,61 +21,67 @@ class DataHolder:
         df = df.groupby([df["ds"], df["PULocationID"]]).count().reset_index()
         loc_list = df["PULocationID"].unique()
         self.df_ref = ray.put(df)
+        print("Stored data in plasma store, returning list of locations to caller")
         return loc_list
     def data(self):
         return self.df_ref
 
-@ray.remote
+@ray.remote(num_cpus=0.25)
 def fit_prophet(i):
+    import boto3
     from prophet import Prophet
     m = Prophet()
     holder = ray.get_actor("dataHolder", namespace="prophet")
     data_ref = ray.get(holder.data.remote())
     df = ray.get(data_ref)
     selection = df[df["PULocationID"]==i]
+    selection.to_csv(f"s3://taxi-prophet-data/test-log/model-{i}.csv")
     if (len(selection) > 1):
         m.fit(selection)
-    mlflow.autolog(models=True, exclusive=False)
-    return m
+        futures = m.make_future_dataframe(periods=5)
+        m.to_csv(f"s3://taxi-prophet-data/output/model-{i}.csv")
+    else:
+        print("Not enough data for predictions")
+    return f"done-with-{i}"
 
-## ray connection
-ray.init("anyscale://parallel", log_to_driver=False, 
-        runtime_env= {"pip":["prophet", "mlflow"],"excludes":["yellow*"],
+
+## back pressure to limit the # of tasks in flight
+@ray.remote
+def handle_runs():
+    result = []
+    max_tasks = 2 # specifying the max number of results
+    holder = DataHolder.options(name="dataHolder", namespace="prophet").remote()
+    loc_list = ray.get(holder.fetch_data.remote())
+    for i in loc_list:
+        if len(result) > max_tasks:
+            # calculating how many results should be available
+            num_ready = len(result)-max_tasks
+            # wait for num_returns to be equal to num_ready, ensuring the amount of task in flight is checked
+            ray.wait(result, num_returns=num_ready)
+        result.append(fit_prophet.remote(i))
+    
+    for model in result:
+        m = ray.get(model)
+        print(m)
+
+
+
+
+    
+ray.init("anyscale://parallel",
+#ray.init(
+        runtime_env= {"pip":["prophet", "mlflow", "boto3","fsspec","s3fs"],"excludes":["yellow*"],
                 "env_vars":{"MLFLOW_TRACKING_URI":"databricks",
                         "DATABRICKS_HOST":os.environ["DATABRICKS_HOST"],
                         "DATABRICKS_TOKEN":os.environ["DATABRICKS_TOKEN"],
                         "MLFLOW_EXPERIMENT_NAME":os.environ["MLFLOW_EXPERIMENT_NAME"]}},
                         namespace="prophet")
-#ray.init(log_to_driver=False, namespace="prophet")
-## back pressure to limit the # of tasks in flight
-result = []
-max_tasks = 10 # specifying the max number of results
-try:
-    holder = ray.get_actor("dataHolder", namespace="prophet")
-except:
-    holder = DataHolder.options(name="dataHolder", namespace="prophet", lifetime="detached").remote()
+ref = handle_runs.remote()
 
-loc_list = ray.get(holder.fetch_data.remote())
-for i in loc_list:
-    if len(result) > max_tasks:
-        # calculating how many results should be available
-        num_ready = len(result)-max_tasks
-        # wait for num_returns to be equal to num_ready, ensuring the amount of task in flight is checked
-        ray.wait(result, num_returns=num_ready)
-    result.append(fit_prophet.remote(i))
+final_runs = ray.get(ref)
 
-result = ray.get(result)
-ray.kill(holder)
-
-for m in result:
-    try:
-        f = m.make_future_dataframe(periods=2)
-    except Exception:
-        print("One of the models has not been fit")
-    print(f.tail())
-
-print(result)
+print(final_runs)
 
 
 
-    
+
