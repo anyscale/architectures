@@ -14,7 +14,7 @@ def log_to_wandb():
       "batch_size": 128
     }
     for i in range(100):
-        wandb.log({"loss": i})
+        wandb.log({"loss": i*i/10000})
         time.sleep(0.5)
 
 

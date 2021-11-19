@@ -28,17 +28,13 @@ And if you've forked the repo, you can try the CI:
 
 ## emb-parallel
 
-This directory has example code for executing parallel tasks with Ray using prophet.
+This directory has example code for executing parallel tasks with Ray using prophet.  It also contains a complete example for running Prophet with cloud data on Anyscale.
 
 To run in Anyscale, 
-
-* Download the sample data
-
-`pushd emb-parallel; sh download-data.sh; popd`
-
-* Run the anyscale prophet script
  
 `python emb-parallel/anysacle_prophet.py`
+
+Note, this script runs on a Anyscale AWS, EC2-base cluster; for the fully managed system, you'll need to setup AWS bucket access.
 
 ## integrations
 

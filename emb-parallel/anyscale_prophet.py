@@ -2,7 +2,7 @@
 import os
 import ray
 import pandas as pd
-import mlflow
+import wandb
 
 # Note -- this solution works only in the AWS BYOC solution
 # For fully-managed, access to S3 must be explicitly configured.
@@ -12,7 +12,6 @@ import mlflow
 class DataHolder:
 
     def fetch_data(self):
-        mlflow.autolog(log_models=True, exclusive=False)
         print("Fetching taxi data from s3")
         df = pd.read_csv("https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv")
         df["tpep_pickup_datetime"] = pd.to_datetime(df["tpep_pickup_datetime"] ).dt.date.astype("datetime64")
