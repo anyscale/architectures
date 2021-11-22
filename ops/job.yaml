@@ -1,0 +1,7 @@
+name: sample-job
+cluster_env: jobs-ce:1
+cloud: anyscale-managed
+runtime_env:
+  working_dir: "https://github.com/anyscale/architectures"
+entrypoint: "python ops/sample_job.py --option1=value1"
+max_retries: 3

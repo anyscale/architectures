@@ -1,0 +1,44 @@
+# This example architecture leverages github Actions to test and deploy
+
+name: CI_CD_Architecture
+
+env:
+  ANYSCALE_CLI_TOKEN: ${{ secrets.AUTOMATION_CLI_TOKEN }}
+  ANYSCALE_ENVIRONMENT: "CI"
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test_all:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Demonstrating a simple CI Hook
+          pip install pytest
+          pip install ray[serve]==1.8.0
+          pip install anyscale
+          pip install -r app/ray_impl/requirements.txt
+          python -m pytest tests/remote_tests.py
+          python -m pytest tests/test_app.py
