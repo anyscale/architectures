@@ -1,5 +1,5 @@
 name: sample-job
-cluster_env: jobs-ce:1
+cluster_env: jobs-ce:4
 cloud: anyscale-managed
 runtime_env:
   working_dir: "https://github.com/anyscale/architectures"
