@@ -1,0 +1,7 @@
+name: sample-job-from-git
+cluster_env: jobs-ce:4
+cloud: aws-ec2
+runtime_env:
+  working_dir: "https://github.com/anyscale/architectures/archive/refs/heads/main.zip"
+entrypoint: "python ops/sample_job.py --option1=value1"
+max_retries: 3

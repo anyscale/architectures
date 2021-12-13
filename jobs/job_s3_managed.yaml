@@ -1,7 +1,7 @@
-name: sample-job
+name: sample-job-s3-managed
 cluster_env: jobs-ce:4
-cloud: anyscale-managed
+compute_config: S3_Accessing_config
 runtime_env:
-  working_dir: "https://github.com/anyscale/architectures"
+  working_dir: "s3://dir-temp/arch.zip"
 entrypoint: "python ops/sample_job.py --option1=value1"
 max_retries: 3

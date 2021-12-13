@@ -1,0 +1,7 @@
+name: sample-job-from-gcp
+cluster_env: jobs-ce:4
+cloud: byo_gcp_demos
+runtime_env:
+  working_dir: "https://storage.cloud.google.com/cwg-bucket/arch.zip"
+entrypoint: "python ops/sample_job.py --option1=value1"
+max_retries: 3
