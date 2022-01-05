@@ -1,8 +1,8 @@
 ## import things
 import os
 import ray
+import logging
 import pandas as pd
-import wandb
 
 # Note -- this solution works only in the AWS BYOC solution
 # For fully-managed, access to S3 must be explicitly configured.
@@ -38,7 +38,7 @@ def fit_prophet(i):
         m.fit(selection)
         futures = m.make_future_dataframe(periods=30)
         forecast = m.predict(futures)
-        forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].to_csv(f"s3://taxi-prophet-data/output/forecast-{i}.csv")
+        forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].to_csv(f"s3://anyscale-jobs-cld-f2eq16c8ir2hsikddsvnmciq/taxi-prophet-data/output/forecast-{i}.csv")
     else:
         print("Not enough data for predictions")
     return f"done-with-{i}"
@@ -64,14 +64,19 @@ def handle_runs():
         print(m)
 
     
-ray.init("anyscale://parallel",
-#ray.init(address="auto",
+ray.init("anyscale://parallel-managed",
+        cloud="anyscale-managed-2",
+        log_to_driver=True,
+        configure_logging=True,  # this is default
+        logging_level=logging.DEBUG,
         runtime_env= {"pip":["prophet", "mlflow", "boto3","fsspec","s3fs"],"excludes":["yellow*"],
+                "working_dir":".",
                 "env_vars":{"MLFLOW_TRACKING_URI":"databricks",
                         "DATABRICKS_HOST":os.environ["DATABRICKS_HOST"],
                         "DATABRICKS_TOKEN":os.environ["DATABRICKS_TOKEN"],
                         "MLFLOW_EXPERIMENT_NAME":os.environ["MLFLOW_EXPERIMENT_NAME"]}},
-                        namespace="prophet")
+        namespace="prophet")
+
 ref = handle_runs.remote()
 
 final_runs = ray.get(ref)
