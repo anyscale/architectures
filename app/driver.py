@@ -2,7 +2,7 @@ import ray
 import time
 import random
 
-from app.ray_impl.remote_compute import JobRunner
+from app.ray_impl.remote_compute import TaskRunner
 
 from ray.exceptions import GetTimeoutError
 
@@ -24,11 +24,11 @@ class RayEntryPoint:
                     #cluster_env=
                     #cluster_compute=
                     )
-            self.actor = JobRunner.remote()
+            self.actor = TaskRunner.remote()
         self.initialized = True
 
     def execute(self):
-        """Kicks off the remote job.
+        """Kicks off the remote task.
         Makes sure not to block with any calls to ray.get.
         """
         self.result_ref = self.actor.do_something.remote()
@@ -47,7 +47,7 @@ class RayEntryPoint:
                     response.append(f"Not ready yet: {self.result_ref}")
                     return response
         except AttributeError:
-            response.append(f"No job hes yet been submitted")
+            response.append(f"No task hes yet been submitted")
         except GetTimeoutError:
             response.append(f"Not ready yet: {self.result_ref}")
         return response

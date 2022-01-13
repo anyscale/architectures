@@ -12,23 +12,23 @@ class MyModel:
         return json.dumps({"name":self.name,"number":self.number})
 
 @ray.remote
-def sub_job():
+def sub_task():
     """A Ray task that generates random numbers within a typed structure."""
     time.sleep(5)
     return MyModel(random.choice(list("alongradomstring")), random.uniform(-1,1))
 
 
 @ray.remote
-class JobRunner:
+class TaskRunner:
     def do_something(self):
         random_numbers = []
         for i in range(10):
-            random_numbers.append(sub_job.remote())
+            random_numbers.append(sub_task.remote())
         return random_numbers
 
 if (__name__ == "__main__"):
     ray.init("anyscale://ci_cd_architecture", project_dir=".", runtime_env={"excludes":["tests"]})
-    x = JobRunner.remote()
+    x = TaskRunner.remote()
     r = x.do_something.remote()
     results_list = ray.get(r)
     print([ray.get(r2).as_json() for r2 in results_list])
