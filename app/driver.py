@@ -17,7 +17,7 @@ class RayEntryPoint:
         if (not(self.initialized)):
             self.url = url
             ray.init(url, 
-                    runtime_env={"excludes":["tests", "yello*"]
+                    runtime_env={"excludes":["tests", "yello*"],
                         "working_dir":"."}
                     # this is one place to configure Anyscale environment
                     # if they do not vary by execution environment
