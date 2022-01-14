@@ -14,8 +14,6 @@ env:
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -42,7 +40,7 @@ jobs:
         run: |
           echo Demonstrating a simple CI Hook
           pip install pytest
-          pip install ray[serve]==1.8.0
+          pip install ray[serve]==1.9.2
           pip install anyscale
           pip install -r app/ray_impl/requirements.txt
           python emb-parallel/anyscale_prophet.py
