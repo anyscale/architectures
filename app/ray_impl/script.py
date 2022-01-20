@@ -27,7 +27,7 @@ class TaskRunner:
         return random_numbers
 
 if (__name__ == "__main__"):
-    ray.init("anyscale://ci_cd_architecture", project_dir=".", runtime_env={"excludes":["tests"]})
+    #ray.init("anyscale://tests", project_dir=".", runtime_env={"excludes":["tests"]})
     x = TaskRunner.remote()
     r = x.do_something.remote()
     results_list = ray.get(r)

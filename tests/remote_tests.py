@@ -1,6 +1,5 @@
 import os
-from app.ray_impl.remote_compute import sub_task, TaskRunner
-from app.driver import RayEntryPoint
+from app.ray_impl.script import sub_task, TaskRunner
 import ray
 import json
 import sys
@@ -8,7 +7,7 @@ import sys
 def setup_module():
     print(sys.path)
     ANYSCALE_URL="anyscale://tests"
-    entry_point = RayEntryPoint(ANYSCALE_URL)
+    ray.init(ANYSCALE_URL)
 
 def test_sub_task():
     refs = [sub_task.remote() for i in range(10)]

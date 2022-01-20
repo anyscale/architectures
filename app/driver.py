@@ -1,8 +1,10 @@
 import ray
 import time
 import random
+from ray.dashboard.modules.job.sdk import JobSubmissionClient
+from ray.dashboard.modules.job.common import JobStatus, JobStatusInfo
 
-from app.ray_impl.remote_compute import TaskRunner
+
 
 from ray.exceptions import GetTimeoutError
 
@@ -16,47 +18,44 @@ class RayEntryPoint:
     def initialize(self, url):
         if (not(self.initialized)):
             self.url = url
-            ray.init(url, 
-                    runtime_env={"excludes":["tests", "yello*"],
-                        "working_dir":"."}
-                    # this is one place to configure Anyscale environment
-                    # if they do not vary by execution environment
-                    #cluster_env=
-                    #cluster_compute=
-                    )
-            self.actor = TaskRunner.remote()
+            self.jobs = []
+            self.client = JobSubmissionClient(url)
         self.initialized = True
 
     def execute(self):
         """Kicks off the remote task.
         Makes sure not to block with any calls to ray.get.
         """
-        self.result_ref = self.actor.do_something.remote()
+        job_id = self.client.submit_job(
+            entrypoint="python app/ray_impl/script.py",
+            # Working dir
+            runtime_env={
+                "working_dir": "./",
+                "pip": ["requests==2.26.0"],
+                "excludes":["tests"]
+                }
+            )
+        self.jobs.append(job_id)
 
     def respond(self):
         """Fetch the results from the remote task.
         If the results are not yet ready, return just those that are, quickly.  Once all results are ready, return them all.
         """
-        response = []
-        try:
-            results  = ray.get(self.result_ref, timeout=0.5)
-            for x in results:
-                try:
-                    response.append(ray.get(x, timeout=0.5))
-                except GetTimeoutError:
-                    response.append(f"Not ready yet: {self.result_ref}")
-                    return response
-        except AttributeError:
-            response.append(f"No task hes yet been submitted")
-        except GetTimeoutError:
-            response.append(f"Not ready yet: {self.result_ref}")
-        return response
+        job_id = self.jobs[0]   #TODO handle multiple jobs
+        status_info = self.client.get_job_status(job_id)
+        status = status_info.status
+        if (status == JobStatus.SUCCEEDED):
+            return self.client.get_job_logs(job_id)
+        if (status == JobStatus.FAILED):
+            return self.client.get_job_logs(job_id)
+        else:
+            return status, job_id
 
     def cleanup(self):
         ray.kill(self.actor)
 
 if (__name__ == "__main__"):
-    url = "anyscale://ci_cd_architecture"
+    url = "anyscale://tests"
     entry_point = RayEntryPoint(url)
     entry_point.execute()
     print(entry_point.respond())
