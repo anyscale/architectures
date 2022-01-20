@@ -1,6 +1,7 @@
 import ray
 import time
 import random
+import click
 from ray.dashboard.modules.job.sdk import JobSubmissionClient
 from ray.dashboard.modules.job.common import JobStatus, JobStatusInfo
 
@@ -19,7 +20,12 @@ class RayEntryPoint:
         if (not(self.initialized)):
             self.url = url
             self.jobs = []
-            self.client = JobSubmissionClient(url)
+            try:
+                self.client = JobSubmissionClient(url)
+            except click.exceptions.ClickException:
+                # if the cluster is not running, Ray JobSubmissionClient cannot be created.
+                ray.init(url)
+                self.client = JobSubmissionClient(url)
         self.initialized = True
 
     def execute(self):
@@ -38,18 +44,21 @@ class RayEntryPoint:
         self.jobs.append(job_id)
 
     def respond(self):
-        """Fetch the results from the remote task.
-        If the results are not yet ready, return just those that are, quickly.  Once all results are ready, return them all.
+        """Fetch the results from a job.
+        This naive approach always returns the status of the first-submitted job.
+        If it is complete, it returns the results and pops that job off the stack.
         """
-        job_id = self.jobs[0]   #TODO handle multiple jobs
-        status_info = self.client.get_job_status(job_id)
-        status = status_info.status
-        if (status == JobStatus.SUCCEEDED):
-            return self.client.get_job_logs(job_id)
-        if (status == JobStatus.FAILED):
-            return self.client.get_job_logs(job_id)
+        if (len(jobs)==0):
+            return "No Job Running"
         else:
-            return status, job_id
+            job_id = self.jobs[0]
+            status_info = self.client.get_job_status(job_id)
+            status = status_info.status
+            if (status in {JobStatus.SUCCEEDED, JobStatus.FAILED}):
+                jobs.pop(0)
+                return self.client.get_job_logs(job_id)
+            else:
+                return status, job_id
 
     def cleanup(self):
         ray.kill(self.actor)
