@@ -48,14 +48,14 @@ class RayEntryPoint:
         This naive approach always returns the status of the first-submitted job.
         If it is complete, it returns the results and pops that job off the stack.
         """
-        if (len(jobs)==0):
+        if (len(self.jobs)==0):
             return "No Job Running"
         else:
             job_id = self.jobs[0]
             status_info = self.client.get_job_status(job_id)
             status = status_info.status
             if (status in {JobStatus.SUCCEEDED, JobStatus.FAILED}):
-                jobs.pop(0)
+                self.jobs.pop(0)
                 return self.client.get_job_logs(job_id)
             else:
                 return status, job_id
