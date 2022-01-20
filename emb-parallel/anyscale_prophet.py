@@ -4,10 +4,6 @@ import ray
 import logging
 import pandas as pd
 
-# Note -- this solution works only in the AWS BYOC solution
-# For fully-managed, access to S3 must be explicitly configured.
-
-
 @ray.remote
 class DataHolder:
 
