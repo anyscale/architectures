@@ -4,6 +4,8 @@ This demo demonstrates an end to end machine learning workload using XGBoost tra
  * Distributed data loading and pre-processing using Ray dataset.
  * The use of `RayXGBoost` as part of the [xgboost_ray project](https://github.com/ray-project/xgboost_ray)
  * Distributed training on Ray cluster
+ * Distributed batch inference
+ * Distributed feature importance 
 
 ## Instructions
 
@@ -19,7 +21,8 @@ should suffice. To see all the arguments to this data generating utility,
 use `create_learnable_data.py --help`
 
 ### Step 2. 
-
+Create a conda environment "conda create -n xgboost-demo python==3.8
+Once you activate the environment (`conda activate xgboost-demo`), you will need to install ray and anyscale ) This example was tested using ray 1.9.2 (`pip install ray==1.9.2 anyscale`)
 Launch the `jupyter notebook` on your laptop.  
 Set the `data_path` variable in first cell in the `xgboost_demo.ipynb` to the path you used
 above.
