@@ -27,12 +27,6 @@ Launch the `jupyter notebook` on your laptop.
 Set the `data_path` variable in first cell in the `xgboost_demo.ipynb` to the path you used
 above.
 
-### Step 3.
-
-Use the Ansycale cluster created for this demo:
- * Create a cluster environment with xgbost_ray in the anyscale console.
- * Create a Ray cluster in Anyscale.
-
 **NOTE**: 
 
 The data set is huge, so running locally on your laptop may not work for the 11GB dataset. 
