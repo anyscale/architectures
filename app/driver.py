@@ -3,7 +3,7 @@ import time
 import random
 import click
 from ray.dashboard.modules.job.sdk import JobSubmissionClient
-from ray.dashboard.modules.job.common import JobStatus, JobStatusInfo
+from ray.dashboard.modules.job.common import JobStatus
 
 
 
@@ -24,7 +24,8 @@ class RayEntryPoint:
                 self.client = JobSubmissionClient(url)
             except click.exceptions.ClickException:
                 # if the cluster is not running, Ray JobSubmissionClient cannot be created.
-                ray.init(url)
+                CLUSTER_ENV = "default_cluster_env_1.10.0_py38"
+                ray.init(url, cluster_env=CLUSTER_ENV)
                 self.client = JobSubmissionClient(url)
         self.initialized = True
 
