@@ -13,12 +13,12 @@ To use it yourself, you'll need an Anyscale account.
 * Clone the repo (or better yet, fork it)
 * install the requirements `pip install -r app/ray_impl/requirements.txt`
 * Use pip to install the local package `pip install -e .`
-* Initialize this directory as a project in your own account: `anyscale init`
+* Initialize this directory as a project in your own account: `anyscale project create`
 
 Then, you can run tests
 
-* pytest tests/remote_test.py
-* pytest tests/test_app.py
+* `pytest tests/remote_tests.py`
+* `pytest tests/test_app.py`
 
 And if you've forked the repo, you can try the CI:
 
@@ -32,7 +32,7 @@ This directory has example code for executing parallel tasks with Ray using prop
 
 To run in Anyscale, 
  
-`python emb-parallel/anysacle_prophet.py`
+`python emb-parallel/anyscale_prophet.py`
 
 Note, this script runs on a Anyscale AWS, EC2-base cluster; for the fully managed system, you'll need to setup AWS bucket access.
 
