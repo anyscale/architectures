@@ -7,7 +7,7 @@ from fastapi import FastAPI, Header, HTTPException
 from loguru import logger
 from pydantic import BaseModel
 
-from . driver import RayEntryPoint
+from . driver import RayEntryPoint, get_anyscale_address
 
 
 class ServiceStatus(BaseModel):
@@ -27,15 +27,10 @@ app = FastAPI(
 global entry_point
 
 @app.on_event("startup")
-def on_startup():
-    # If there is no ANYSCALE_ENVIRONMENT variable, set it to "dev"
-    if 'ANYSCALE_ENVRIONMENT' in os.environ:
-        ANYSCALE_URL = f"anyscale://app-{os.environ['ANYSCALE_ENVIRONMENT']}"
-    else:
-        ANYSCALE_URL = f"anyscale://app-dev"
-    print(f"Starting or connecting to Anyscale Cluster {ANYSCALE_URL}")
+def on_startup(stage=None):
     global entry_point
-    entry_point = RayEntryPoint(ANYSCALE_URL)
+
+    entry_point = RayEntryPoint(get_anyscale_address(stage))
 
 @app.on_event("shutdown")
 async def on_shutdown():

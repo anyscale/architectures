@@ -11,8 +11,7 @@ from app import app
 from app.app import on_startup
 
 client = TestClient(app.app)
-on_startup()
-
+on_startup(stage="TEST")
 
 def status():
     response = client.get("/service/status")
