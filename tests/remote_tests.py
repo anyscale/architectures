@@ -1,13 +1,13 @@
 import os
 from app.ray_impl.script import sub_task, TaskRunner
+from app.driver import get_anyscale_address
 import ray
 import json
 import sys
 
 def setup_module():
     print(sys.path)
-    ANYSCALE_URL="anyscale://tests"
-    ray.init(ANYSCALE_URL)
+    ray.init(get_anyscale_address(stage="TEST"), runtime_env={"working_dir": "./"})
 
 def test_sub_task():
     refs = [sub_task.remote() for i in range(10)]
