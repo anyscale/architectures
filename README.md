@@ -15,7 +15,13 @@ To use it yourself, you'll need an Anyscale account.
 * Use pip to install the local package `pip install -e .`
 * Initialize this directory as a project in your own account: `anyscale project create`
 
-Then, you can run tests
+If you would like to run the application and tests locally, use an environment variable to set `RUN_RAY_LOCAL` to `True`.  The command will initialize a Ray cluster on your local machine. If the environment variable is not set, the tests and applications will attempt to launch a Ray cluster in your Anyscale account.
+
+`export RUN_RAY_LOCAL=True`
+
+By default, the application will attempt to launch or connect to an Anyscale cluster with a name similar to `anyscale://app-{ANYSCALE_ENVIRONMENT}` or `anyscale://app-{ANYSCALE_ENVIRONMENT}-tests` where the `ANYSCALE_ENVIRONMENT` variable is set using an environment variable.  If no environment variable is set, the default is `dev`.  To use an existing Anyscale cluster, the cluster address can be references using the `ANYSCALE_ADDRESS` environment variable.
+
+Then, you can run tests locally, on an existing Anyscale cluster, or on a new cluster by running the following commands:
 
 * `pytest tests/remote_tests.py`
 * `pytest tests/test_app.py`
@@ -23,7 +29,7 @@ Then, you can run tests
 And if you've forked the repo, you can try the CI:
 
 * Set a Github secret called `AUTOMATION_CLI_TOKEN` with your Anyscale CLI token in it.
-* Push a change to a branch and create a PR.
+* Push a change to a branch and create a Pull Request.
 * Navigate to Github Actions to see the job run.
 
 ## emb-parallel
