@@ -53,8 +53,7 @@ class RayEntryPoint:
             return "No Job Running"
         else:
             job_id = self.jobs[0]
-            status_info = self.client.get_job_status(job_id)
-            status = status_info.status
+            status = self.client.get_job_status(job_id)
             if (status in {JobStatus.SUCCEEDED, JobStatus.FAILED}):
                 self.jobs.pop(0)
                 return self.client.get_job_logs(job_id)
