@@ -32,6 +32,8 @@ And if you've forked the repo, you can try the CI:
 * Push a change to a branch and create a Pull Request.
 * Navigate to Github Actions to see the job run.
 
+Once you are done testing, remember to terminate any Anyscale cluster that was created as part of the CI process either using the Anyscale Console or CLI.
+
 ## emb-parallel
 
 This directory has example code for executing parallel tasks with Ray using prophet.  It also contains a complete example for running Prophet with cloud data on Anyscale.
